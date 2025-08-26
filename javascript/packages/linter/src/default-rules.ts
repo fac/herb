@@ -33,6 +33,10 @@ import { HTMLTagNameLowercaseRule } from "./rules/html-tag-name-lowercase.js"
 import { ParserNoErrorsRule } from "./rules/parser-no-errors.js"
 import { SVGTagNameCapitalizationRule } from "./rules/svg-tag-name-capitalization.js"
 
+// Custom rules
+import { ERBNoRemoteForLinkToRule } from "./rules/erb-no-remote-for-link-to.js"
+
+
 export const defaultRules: RuleClass[] = [
   ERBNoEmptyTagsRule,
   ERBNoOutputControlFlowRule,
@@ -66,4 +70,5 @@ export const defaultRules: RuleClass[] = [
   HTMLTagNameLowercaseRule,
   ParserNoErrorsRule,
   SVGTagNameCapitalizationRule,
+  ERBNoRemoteForLinkToRule,
 ]

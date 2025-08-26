@@ -35,6 +35,7 @@ This page contains documentation for all Herb Linter rules.
 - [`html-tag-name-lowercase`](./html-tag-name-lowercase.md) - Enforces lowercase tag names in HTML
 - [`parser-no-errors`](./parser-no-errors.md) - Disallow parser errors in HTML+ERB documents
 - [`svg-tag-name-capitalization`](./svg-tag-name-capitalization.md) - Enforces proper camelCase capitalization for SVG elements
+- [`erb-no-remote-for-link-to`](./erb-no-remote-for-link-to.md) - Checks for `remote: true` on rails helpers
 
 ## Contributing
 
