@@ -12,6 +12,11 @@ export interface ProcessedFile {
   content: string
 }
 
+export interface ProcessingContext {
+  projectPath?: string
+  pattern?: string
+}
+
 export interface ProcessingResult {
   totalErrors: number
   totalWarnings: number
@@ -19,12 +24,13 @@ export interface ProcessingResult {
   ruleCount: number
   allOffenses: ProcessedFile[]
   ruleOffenses: Map<string, { count: number, files: Set<string> }>
+  context?: ProcessingContext
 }
 
 export class FileProcessor {
   private linter: Linter | null = null
 
-  async processFiles(files: string[], formatOption: FormatOption = 'detailed'): Promise<ProcessingResult> {
+  async processFiles(files: string[], formatOption: FormatOption = 'detailed', context?: ProcessingContext): Promise<ProcessingResult> {
     let totalErrors = 0
     let totalWarnings = 0
     let filesWithOffenses = 0
@@ -33,13 +39,12 @@ export class FileProcessor {
     const ruleOffenses = new Map<string, { count: number, files: Set<string> }>()
 
     for (const filename of files) {
-      const filePath = resolve(filename)
+      const filePath = context?.projectPath ? resolve(context.projectPath, filename) : resolve(filename)
       const content = readFileSync(filePath, "utf-8")
-
       const parseResult = Herb.parse(content)
 
       if (parseResult.errors.length > 0) {
-        if (formatOption !== 'json' && formatOption !== 'github') {
+        if (formatOption !== 'json') {
           console.error(`${colorize(filename, "cyan")} - ${colorize("Parse errors:", "brightRed")}`)
 
           for (const error of parseResult.errors) {
@@ -47,7 +52,6 @@ export class FileProcessor {
           }
         }
 
-        // Add parse errors to offenses for JSON output
         for (const error of parseResult.errors) {
           allOffenses.push({ filename, offense: error, content })
         }
@@ -68,7 +72,7 @@ export class FileProcessor {
       }
 
       if (lintResult.offenses.length === 0) {
-        if (files.length === 1 && formatOption !== 'json' && formatOption !== 'github') {
+        if (files.length === 1 && formatOption !== 'json') {
           console.log(`${colorize("✓", "brightGreen")} ${colorize(filename, "cyan")} - ${colorize("No issues found", "green")}`)
         }
       } else {
@@ -87,6 +91,6 @@ export class FileProcessor {
       }
     }
 
-    return { totalErrors, totalWarnings, filesWithOffenses, ruleCount, allOffenses, ruleOffenses }
+    return { totalErrors, totalWarnings, filesWithOffenses, ruleCount, allOffenses, ruleOffenses, context }
   }
 }
