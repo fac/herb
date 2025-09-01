@@ -1,0 +1,24 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directories:
+      - "**/*"
+    schedule:
+      interval: "daily"
+    rebase-strategy: "disabled"
+
+  - package-ecosystem: "bundler"
+    directories:
+      - "**/*"
+    schedule:
+      interval: "daily"
+    rebase-strategy: "disabled"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    # Workflow files stored in the
+    # default location of `.github/workflows`
+    directory: "/"
+    schedule:
+      interval: "daily"
+    rebase-strategy: "disabled"
