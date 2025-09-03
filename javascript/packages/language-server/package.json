@@ -53,6 +53,6 @@
     "vscode-languageserver-textdocument": "^1.0.12"
   },
   "devDependencies": {
-    "vitest": "^1.0.0"
+    "vitest": "^3.2.4"
   }
 }
