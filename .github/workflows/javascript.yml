@@ -75,6 +75,10 @@ jobs:
       # - run: npx nx affected -t test
 
       - name: Dry-run publish to github
-        run: yarn publish --dry-run ./javascript/packages/linter
+        run: |-
+          cd javascript/packages/linter
+          echo npmRegistryServer: "https://npm.pkg.github.com" > .yarnrc
+          echo npmAuthToken: "secretAuthTokenValue" >> .yarnrc
+          yarn publish --dry-run --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
