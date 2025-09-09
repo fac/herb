@@ -4,6 +4,7 @@ on: push
 
 jobs:
   publish:
+    if: ${{ false }}
     name: Publish
     runs-on: ubuntu-latest
     permissions:
