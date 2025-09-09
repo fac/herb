@@ -48,10 +48,10 @@ jobs:
       - name: Render Templates
         run: bundle exec rake templates
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "yarn"
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      #     cache: "yarn"
 
       - name: yarn install
         run: yarn install --frozen-lockfile
@@ -75,6 +75,6 @@ jobs:
       # - run: npx nx affected -t test
 
       - name: Dry-run publish to github
-        run: npm publish --dry-run ./javascript/packages/linter
+        run: yarn publish --dry-run ./javascript/packages/linter
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
