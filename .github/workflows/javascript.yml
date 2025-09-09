@@ -77,8 +77,8 @@ jobs:
       - name: Dry-run publish to github
         run: |-
           cd javascript/packages/linter
-          echo npmRegistryServer: "https://npm.pkg.github.com" > .yarnrc
-          echo npmAuthToken: "secretAuthTokenValue" >> .yarnrc
+          echo Token is ${NODE_AUTH_TOKEN}
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
           yarn publish --dry-run --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
