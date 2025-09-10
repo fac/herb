@@ -38,6 +38,7 @@ permissions:
 
 jobs:
   build:
+    if: ${{ false }}
     name: Build ${{ matrix.target }} gem
     strategy:
       fail-fast: false
