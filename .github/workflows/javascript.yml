@@ -26,6 +26,7 @@ jobs:
         with:
           node-version: 20
           cache: "yarn"
+          registry-url: 'https://npm.pkg.github.com'
 
       - name: Add LLVM apt Repo
         run: |-
@@ -47,10 +48,10 @@ jobs:
       - name: Render Templates
         run: bundle exec rake templates
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "yarn"
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      #     cache: "yarn"
 
       - name: yarn install
         run: yarn install --frozen-lockfile
@@ -72,3 +73,9 @@ jobs:
       # # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       # - run: npx nx affected -t build
       # - run: npx nx affected -t test
+
+      - name: Dry-run publish to github
+        run: |-
+          npm run release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
