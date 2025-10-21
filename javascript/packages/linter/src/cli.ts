@@ -1,11 +1,15 @@
 import { glob } from "glob"
 import { Herb } from "@herb-tools/node-wasm"
+import { HERB_FILES_GLOB } from "@herb-tools/core"
+
 import { existsSync, statSync } from "fs"
 import { dirname, resolve, relative } from "path"
 
-import { ArgumentParser, type FormatOption } from "./cli/argument-parser.js"
+import { ArgumentParser } from "./cli/argument-parser.js"
 import { FileProcessor } from "./cli/file-processor.js"
 import { OutputManager } from "./cli/output-manager.js"
+
+import type { FormatOption } from "./cli/argument-parser.js"
 
 export * from "./cli/index.js"
 
@@ -105,7 +109,7 @@ export class CLI {
 
   protected adjustPattern(pattern: string | undefined): string {
     if (!pattern) {
-      return '**/*.html.erb'
+      return HERB_FILES_GLOB
     }
 
     const resolvedPattern = resolve(pattern)
@@ -114,7 +118,7 @@ export class CLI {
       const stats = statSync(resolvedPattern)
 
       if (stats.isDirectory()) {
-        return '**/*.html.erb'
+        return HERB_FILES_GLOB
       } else if (stats.isFile()) {
         return relative(this.projectPath, resolvedPattern)
       }
@@ -124,7 +128,7 @@ export class CLI {
   }
 
   protected async beforeProcess(): Promise<void> {
-    await Herb.load()
+    // Hook for subclasses to add custom output before processing
   }
 
   protected async afterProcess(_results: any, _outputOptions: any): Promise<void> {
@@ -132,10 +136,12 @@ export class CLI {
   }
 
   async run() {
+    await Herb.load()
+
     const startTime = Date.now()
     const startDate = new Date()
 
-    let { pattern, formatOption, showTiming, theme, wrapLines, truncateLines, useGitHubActions } = this.argumentParser.parse(process.argv)
+    let { pattern, formatOption, showTiming, theme, wrapLines, truncateLines, useGitHubActions, fix } = this.argumentParser.parse(process.argv)
 
     this.determineProjectPath(pattern)
 
@@ -163,7 +169,8 @@ export class CLI {
 
       const context = {
         projectPath: this.projectPath,
-        pattern: pattern
+        pattern,
+        fix
       }
 
       const results = await this.fileProcessor.processFiles(files, formatOption, context)

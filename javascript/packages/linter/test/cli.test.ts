@@ -50,6 +50,13 @@ describe("CLI Output Formatting", () => {
     expect(exitCode).toBe(1)
   })
 
+  test("handles boolean attributes", () => {
+    const { output, exitCode } = runLinter("boolean-attribute.html.erb", "--no-wrap-lines")
+
+    expect(output).toMatchSnapshot()
+    expect(exitCode).toBe(0)
+  })
+
   test("formats success output correctly", () => {
     const { output, exitCode } = runLinter("clean-file.html.erb", "--no-wrap-lines")
 
@@ -78,6 +85,13 @@ describe("CLI Output Formatting", () => {
     expect(exitCode).toBe(1)
   })
 
+  test("diplays only parsers errors if one is present", () => {
+    const { output, exitCode } = runLinter("parser-errors.html.erb", "--no-wrap-lines")
+
+    expect(output).toMatchSnapshot()
+    expect(exitCode).toBe(1)
+  })
+
   test("enables line wrapping by default", () => {
     const { output } = runLinter("long-line.html.erb")
 
@@ -91,7 +105,7 @@ describe("CLI Output Formatting", () => {
   test("correctly passes filename context for file-specific rules", () => {
     const { output, exitCode } = runLinter("no-trailing-newline.html.erb", "--simple", "--no-wrap-lines")
 
-    expect(output).toContain("erb-requires-trailing-newline")
+    expect(output).toContain("erb-require-trailing-newline")
     expect(output).toContain("File must end with trailing newline")
     expect(exitCode).toBe(1)
   })
@@ -164,6 +178,13 @@ describe("CLI Output Formatting", () => {
 
   test("GitHub Actions format includes rule codes", () => {
     const { output, exitCode } = runLinter("no-trailing-newline.html.erb", "--github")
+
+    expect(output).toMatchSnapshot()
+    expect(exitCode).toBe(1)
+  })
+
+  test("Ignores disabled rules", () => {
+    const { output, exitCode } = runLinter("ignored.html.erb")
 
     expect(output).toMatchSnapshot()
     expect(exitCode).toBe(1)

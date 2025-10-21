@@ -4,12 +4,14 @@ export interface SummaryData {
   files: string[]
   totalErrors: number
   totalWarnings: number
+  totalIgnored: number
   filesWithOffenses: number
   ruleCount: number
   startTime: number
   startDate: Date
   showTiming: boolean
   ruleOffenses: Map<string, { count: number, files: Set<string> }>
+  autofixableCount: number
 }
 
 export class SummaryReporter {
@@ -18,7 +20,7 @@ export class SummaryReporter {
   }
 
   displaySummary(data: SummaryData): void {
-    const { files, totalErrors, totalWarnings, filesWithOffenses, ruleCount, startTime, startDate, showTiming } = data
+    const { files, totalErrors, totalWarnings, totalIgnored, filesWithOffenses, ruleCount, startTime, startDate, showTiming, autofixableCount } = data
 
     console.log("\n")
     console.log(` ${colorize("Summary:", "bold")}`)
@@ -62,6 +64,10 @@ export class SummaryReporter {
       parts.push(colorize(colorize(`${totalWarnings} ${this.pluralize(totalWarnings, "warning")}`, "green"), "bold"))
     }
 
+    if (totalIgnored > 0) {
+      parts.push(colorize(colorize(`${totalIgnored} ignored`, "gray"), "bold"))
+    }
+
     if (parts.length === 0) {
       offensesSummary = colorize(colorize("0 offenses", "green"), "bold")
     } else {
@@ -75,10 +81,24 @@ export class SummaryReporter {
         detailText = `${totalOffenses} ${this.pluralize(totalOffenses, "offense")} across ${filesWithOffenses} ${this.pluralize(filesWithOffenses, "file")}`
       }
 
-      offensesSummary += ` ${colorize(colorize(`(${detailText})`, "gray"), "dim")}`
+      if (detailText) {
+        offensesSummary += ` ${colorize(colorize(`(${detailText})`, "gray"), "dim")}`
+      }
     }
 
     console.log(`  ${colorize(pad("Offenses"), "gray")} ${offensesSummary}`)
+
+    if (autofixableCount > 0 || (totalErrors + totalWarnings) > 0) {
+      const totalOffenses = totalErrors + totalWarnings
+
+      let fixableLine = `${colorize(colorize(`${totalOffenses} ${this.pluralize(totalOffenses, "offense")}`, "brightRed"), "bold")}`
+
+      if (autofixableCount > 0) {
+        fixableLine += ` | ${colorize(colorize(`${autofixableCount} autocorrectable using \`--fix\``, "green"), "bold")}`
+      }
+
+      console.log(`  ${colorize(pad("Fixable"), "gray")} ${fixableLine}`)
+    }
 
     if (showTiming) {
       const duration = Date.now() - startTime
