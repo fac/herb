@@ -39,7 +39,7 @@
     "@herb-tools/printer": "0.7.5"
   },
   "devDependencies": {
-    "glob": "^11.0.3"
+    "glob": "^11.1.0"
   },
   "files": [
     "package.json",
